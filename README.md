@@ -8,9 +8,9 @@ una conexión una base de datos alojada en la máquina local.
 
 ## 4. Reparto de las tareas entre ambos integrantes
 * **Pablo Rodríguez Lomba**
-    + 
+    + X
 * **Adrián González Gómez**
-    + 
+    + X
 ## 5. Extras realizados
 
 
