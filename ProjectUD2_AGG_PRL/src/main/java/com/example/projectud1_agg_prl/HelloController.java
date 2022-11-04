@@ -200,7 +200,7 @@ public class HelloController implements Initializable {
        boolean repe = false;
        String info = "";
 
-
+        Helm.setDisable(true);
        int index = hHelmet.get(Helm.getValue());
        JSONObject  selectedArmor = (JSONObject) Helmets.get(index);
        JSONArray sk = (JSONArray) selectedArmor.get("skills");
@@ -242,7 +242,7 @@ public class HelloController implements Initializable {
         boolean repe = false;
         String info = "";
 
-
+        Chest.setDisable(true);
         int index = hChest.get(Chest.getValue().toString());
         JSONObject selectedArmor = (JSONObject) Chestplate.get(index);
         JSONArray sk = (JSONArray) selectedArmor.get("skills");
@@ -284,7 +284,7 @@ public class HelloController implements Initializable {
     private void comboActionGloves(ActionEvent event) {
         boolean repe = false;
         String info = "";
-
+        Hands.setDisable(true);
         int index = hGloves.get(Hands.getValue());
         JSONObject  selectedArmor = (JSONObject) Gauntlets.get(index);
         JSONArray sk = (JSONArray) selectedArmor.get("skills");
@@ -326,7 +326,7 @@ public class HelloController implements Initializable {
         boolean repe = false;
         String info = "";
 
-
+        Waist.setDisable(true);
         int index = hWaist.get(Waist.getValue());
         JSONObject  selectedArmor = (JSONObject) Waists.get(index);
         JSONArray sk = (JSONArray) selectedArmor.get("skills");
@@ -367,7 +367,7 @@ public class HelloController implements Initializable {
     private void comboActionLegs(ActionEvent event) {
         boolean repe = false;
         String info = "";
-
+        Legs.setDisable(true);
         int index = hLegs.get(Legs.getValue());
         JSONObject  selectedArmor = (JSONObject) Leggins.get(index);
         JSONArray sk = (JSONArray) selectedArmor.get("skills");
@@ -394,10 +394,20 @@ public class HelloController implements Initializable {
                 info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
             }
 
-            Texto.setText(info );
+            Texto.setText(info);
 
 
 
+    }
+    @FXML
+    private void ActionClear(ActionEvent event) {
+        Legs.setDisable(false);
+        Helm.setDisable(false);
+        Chest.setDisable(false);
+        Waist.setDisable(false);
+        Hands.setDisable(false);
+        Texto.clear();
+        shownSkills.clear();
     }
 
 
