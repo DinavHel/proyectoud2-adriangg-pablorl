@@ -281,7 +281,7 @@ public class HelloController implements Initializable {
      * @param event
      */
     @FXML
-    public void comboActionGloves(ActionEvent event) {
+    private void comboActionGloves(ActionEvent event) {
         boolean repe = false;
         String info = "";
         Hands.setDisable(true);
@@ -322,7 +322,7 @@ public class HelloController implements Initializable {
      * @param event
      */
     @FXML
-     void comboActionWaist(ActionEvent event) {
+     private void comboActionWaist(ActionEvent event) {
         boolean repe = false;
         String info = "";
 
