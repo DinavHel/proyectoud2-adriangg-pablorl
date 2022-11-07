@@ -23,17 +23,28 @@ public class DAO {
 	
 	public Connection abrirConexionMariaDB() throws ClassNotFoundException, SQLException {
 		Class.forName("org.mariadb.jdbc.Driver");
-        String jdbcUrl = "jdbc:mariadb://localhost:3306/teis1";
+        String jdbcUrl = "jdbc:mariadb://localhost:3306/" + dbName;
         
         Connection con = DriverManager.getConnection(jdbcUrl, user, pass);
-        
-        Statement stmt = con.createStatement(); 
-        ResultSet rs = stmt.executeQuery("SELECT * FROM alumnos"); 
-        while (rs.next()){ 
-            System.out.println(rs.getString("id") + " " + 
-                    rs.getString(2)+ " " + rs.getString("nombre")); 
-        }
 		return con;
 	}
-
+	
+	public int insercionDatos(String table, String[] columns, String[] values) throws ClassNotFoundException, SQLException {
+		Connection con = this.abrirConexionMariaDB();
+		Statement stmt = con.createStatement();
+		String sql="INSERT INTO " + table + " (";
+		for(int i = 0; i < columns.length - 1; i++) {
+			sql += columns[i] + ",";
+		}
+		sql += columns[columns.length - 1] + ")";
+		sql += " VALUES (";
+		for(int i = 0; i < values.length - 1; i++) {
+			sql += values[i] + ",";
+		}
+		sql += values[values.length - 1] + ");";
+        
+        int num = stmt.executeUpdate(sql);
+        con.close();
+		return num;
+	}
 }
