@@ -47,4 +47,6 @@ public class DAO {
         con.close();
 		return num;
 	}
+	
+	//TODO Implementar método para ler os datos almacenados na base de datos
 }
