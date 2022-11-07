@@ -1,32 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="517.0" prefWidth="712.0" spacing="20.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectud1_agg_prl.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-   <Pane cacheShape="false" centerShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="517.0" prefWidth="712.0" scaleShape="false">
-      <children>
-         <ComboBox id="Chest" fx:id="Chest" layoutX="129.0" layoutY="190.0" onAction="#comboActionChest" prefWidth="150.0" />
-         <ComboBox fx:id="Hands" layoutX="129.0" layoutY="260.0" onAction="#comboActionGloves" prefWidth="150.0" />
-         <ComboBox fx:id="Waist" layoutX="129.0" layoutY="330.0" onAction="#comboActionWaist" prefWidth="150.0" />
-         <ComboBox fx:id="Legs" layoutX="129.0" layoutY="400.0" onAction="#comboActionLegs" prefWidth="150.0" />
-         <TextArea fx:id="Texto" layoutX="392.0" layoutY="57.0" prefHeight="316.0" prefWidth="261.0" />
-         <ComboBox id="Helm" fx:id="Helm" layoutX="129.0" layoutY="120.0" onAction="#comboActionHelm" prefWidth="150.0" />
-         <Label layoutX="71.0" layoutY="120.0" text="Helm" />
-         <Label layoutX="69.0" layoutY="190.0" text="Chest" />
-         <Label layoutX="68.0" layoutY="264.0" text="Hands" />
-         <Label layoutX="69.0" layoutY="334.0" text="Waist" />
-         <Label layoutX="72.0" layoutY="404.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Legs" />
-         <Button layoutX="461.0" layoutY="413.0" mnemonicParsing="false" onAction="#ActionClear" prefHeight="25.0" prefWidth="125.0" text="Clear" />
-      </children></Pane>
-
-    <Label fx:id="welcomeText" />
-</VBox>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="380.0" prefWidth="640.0" styleClass="root" stylesheets="@../../../../../CssStyle/LoginStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectud1_agg_prl.HelloController">
+   <children>
+      <TextArea fx:id="Texto" layoutX="320.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" />
+      <Label layoutX="28.0" layoutY="64.0" text="Helm" textFill="#fffefc" />
+      <Label layoutX="28.0" layoutY="114.0" text="Chest" textFill="WHITE" />
+      <Label layoutX="28.0" layoutY="164.0" text="Gloves" textFill="#fffefe" />
+      <Label layoutX="28.0" layoutY="214.0" text="Waist" textFill="WHITE" />
+      <Label layoutX="28.0" layoutY="264.0" text="Legs" textFill="WHITE" />
+      <Button blendMode="OVERLAY" layoutX="368.0" layoutY="235.0" mnemonicParsing="false" onAction="#ActionClear" prefHeight="25.0" prefWidth="94.0" text="Clear" />
+      <ComboBox fx:id="Legs" layoutX="83.0" layoutY="260.0" onAction="#comboActionLegs" prefWidth="150.0" />
+      <ComboBox fx:id="Chest" layoutX="83.0" layoutY="110.0" onAction="#comboActionChest" prefWidth="150.0" />
+      <ComboBox fx:id="Hands" layoutX="83.0" layoutY="160.0" onAction="#comboActionGloves" prefWidth="150.0" />
+      <ComboBox fx:id="Waist" layoutX="83.0" layoutY="210.0" onAction="#comboActionWaist" prefWidth="150.0" />
+      <ComboBox fx:id="Helm" layoutX="83.0" layoutY="60.0" onAction="#comboActionHelm" prefWidth="150.0" />
+   </children>
+</AnchorPane>

@@ -48,7 +48,7 @@ public class HelloController implements Initializable {
     @FXML
     private ComboBox Hands;
     @FXML
-    private  ComboBox Helm;
+    private ComboBox Helm;
 
     private JSONArray Helmets = new JSONArray();
     private JSONArray Chestplate = new JSONArray();
@@ -281,7 +281,7 @@ public class HelloController implements Initializable {
      * @param event
      */
     @FXML
-    private void comboActionGloves(ActionEvent event) {
+    public void comboActionGloves(ActionEvent event) {
         boolean repe = false;
         String info = "";
         Hands.setDisable(true);
@@ -322,7 +322,7 @@ public class HelloController implements Initializable {
      * @param event
      */
     @FXML
-    private void comboActionWaist(ActionEvent event) {
+     void comboActionWaist(ActionEvent event) {
         boolean repe = false;
         String info = "";
 
