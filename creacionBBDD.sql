@@ -2,18 +2,19 @@ DROP DATABASE IF EXISTS monsterhunterworld;
 CREATE DATABASE IF NOT EXISTS monsterhunterworld;
 USE monsterhunterworld;
 CREATE TABLE headgear (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    fire_res INT NOT NULL,
-    water_res INT NOT NULL,
-    ice_res INT NOT NULL,
-    thunder_res INT NOT NULL,
-    dragon_res INT NOT NULL,
+    id VARCHAR(100) NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    fire_res VARCHAR(10) NULL,
+    water_res VARCHAR(10) NULL,
+    ice_res VARCHAR(10) NULL,
+    thunder_res VARCHAR(10) NULL,
+    dragon_res VARCHAR(10) NULL,
     PRIMARY KEY(id)
 ) ENGINE=InnoDB;
 CREATE TABLE headgear_skills (
-    headgear INT NOT NULL,
+    headgear VARCHAR(100) NULL,
     skill VARCHAR(100) NOT NULL,
+    skill_level VARCHAR(100) not null,
     FOREIGN KEY(headgear)
         REFERENCES headgear(id)
         ON UPDATE CASCADE
@@ -21,19 +22,19 @@ CREATE TABLE headgear_skills (
     PRIMARY KEY(headgear, skill)
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS Chest (
-    id INT UNSIGNED NOT NULL auto_increment,
+    id VARCHAR(100)NOT NULL auto_increment,
     name VARCHAR(100) NOT NULL,
-    fire_res INT NOT NULL,
-    water_res INT NOT NULL,
-    ice_res INT NOT NULL,
-    thunder_res INT NOT NULL,
-    dragon_res INT NOT NULL,
+    fire_res VARCHAR(10) NULL,
+    water_res VARCHAR(10) NULL,
+    ice_res VARCHAR(10) NULL,
+    thunder_res VARCHAR(10) NULL,
+    dragon_res VARCHAR(10) NULL,
     PRIMARY KEY(id)
 )ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS Chest_skills (
-    Chest INT UNSIGNED NOT NULL,
+    Chest VARCHAR(100) NOT NULL,
     skill VARCHAR(100) NOT NULL,
-    skill_level int not null,
+    skill_level VARCHAR(10) null,
     FOREIGN KEY(Chest) REFERENCES Chest(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
@@ -41,58 +42,58 @@ CREATE TABLE IF NOT EXISTS Chest_skills (
 
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS gloves (
-    id INT UNSIGNED NOT NULL auto_increment,
+    id VARCHAR(100) NOT NULL auto_increment,
     name VARCHAR(100) NOT NULL,
-    fire_res INT NOT NULL,
-    water_res INT NOT NULL,
-    ice_res INT NOT NULL,
-    thunder_res INT NOT NULL,
-    dragon_res INT NOT NULL,
+    fire_res VARCHAR(10) NULL,
+    water_res VARCHAR(10) NULL,
+    ice_res VARCHAR(10) NULL,
+    thunder_res VARCHAR(10) NULL,
+    dragon_res VARCHAR(10) NULL,
     PRIMARY KEY(id)
 )ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS gloves_skills (
-    gloves INT UNSIGNED NOT NULL,
+    gloves VARCHAR(100) NOT NULL,
     skill VARCHAR(100) NOT NULL,
-    skill_level int not null,
+    skill_level VARCHAR(10) null,
     FOREIGN KEY(gloves) REFERENCES gloves(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     PRIMARY KEY(gloves,skill)
 )ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS waist (
-    id INT UNSIGNED NOT NULL auto_increment,
+    id VARCHAR(100) NOT NULL auto_increment,
     name VARCHAR(100) NOT NULL,
-    fire_res INT NOT NULL,
-    water_res INT NOT NULL,
-    ice_res INT NOT NULL,
-    thunder_res INT NOT NULL,
-    dragon_res INT NOT NULL,
+    fire_res VARCHAR(10) NULL,
+    water_res VARCHAR(10) NULL,
+    ice_res VARCHAR(10) NULL,
+    thunder_res VARCHAR(10) NULL,
+    dragon_res VARCHAR(10) NULL,
     PRIMARY KEY(id)
 )ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS waist_skills (
-    waist INT UNSIGNED NOT NULL,
+    waist VARCHAR(100) NOT NULL,
     skill VARCHAR(100) NOT NULL,
-    skill_level int not null,
+    skill_level VARCHAR(10) null,
     FOREIGN KEY(waist) REFERENCES waist(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     PRIMARY KEY(waist,skill)
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS legs (
-    id INT UNSIGNED NOT NULL auto_increment,
+    id VARCHAR(100) NOT NULL auto_increment,
     name VARCHAR(100) NOT NULL,
-    fire_res INT NOT NULL,
-    water_res INT NOT NULL,
-    ice_res INT NOT NULL,
-    thunder_res INT NOT NULL,
-    dragon_res INT NOT NULL,
+    fire_res VARCHAR(10) NULL,
+    water_res VARCHAR(10) NULL,
+    ice_res VARCHAR(10) NULL,
+    thunder_res VARCHAR(10) NULL,
+    dragon_res VARCHAR(10) NULL,
     PRIMARY KEY(id)
 
 )ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS legs_skills (
-    legs INT UNSIGNED NOT NULL,
+    legs VARCHAR(100) NOT NULL,
     skill VARCHAR(100) NOT NULL,
-    skill_level int not null,
+    skill_level VARCHAR(10) null,
     FOREIGN KEY(legs) REFERENCES legs(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

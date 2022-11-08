@@ -39,11 +39,11 @@ public class DAO {
 			sql += columns[i] + ",";
 		}
 		sql += columns[columns.length - 1] + ")";
-		sql += " VALUES (";
+		sql += " VALUES ('";
 		for(int i = 0; i < values.length - 1; i++) {
-			sql += values[i] + ",";
+			sql += values[i] + "','";
 		}
-		sql += values[values.length - 1] + ");";
+		sql += values[values.length - 1] + "');";
         
         int num = stmt.executeUpdate(sql);
         con.close();
@@ -71,5 +71,7 @@ public class DAO {
 		con.close();
 		return result;
 	}
-	
+
+
+
 }

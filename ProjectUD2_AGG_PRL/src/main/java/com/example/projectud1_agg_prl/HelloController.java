@@ -26,6 +26,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -63,6 +64,21 @@ public class HelloController implements Initializable {
 
     private static ArrayList<Skill> shownSkills = new ArrayList<>();
 
+    private String[] ArmorColumns = {"id","name","fire_res","water_res","ice_res","thunder_res","dragon_res"};
+    private String[] chestSkills = {"Chest","skill","skill_level"};
+    private String[] headSkills = {"headgear","skill","skill_level"};
+    private String[] glovesSkills = {"gloves","skill","skill_level"};
+    private String[] waistSkills = {"waist","skill","skill_level"};
+    private String[] legsSkills = {"legs","skill","skill_level"};
+    private String[] valuesArmor = new String[7];
+    private String[] valuesSkill = new String[3];
+    private String[] split = new String[6];
+    private String[] fireRes = new String[2];
+    private String[] waterRes = new String[2];
+    private String[] iceRes = new String[2];
+    private String[] thunderRes = new String[2];
+    private String[] dragonRes = new String[2];
+
 
     @FXML
     protected void onHelloButtonClick() {
@@ -89,37 +105,13 @@ public class HelloController implements Initializable {
         int countl = 0;
 
         //busca si existe un archivo json para las armaduras//
-        if (!Armaduras.exists()) {
-            try {
-                Armaduras.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+
 
         try {
             //creas una conexion y con el metodo setRequestMethod delimitas el tipo de consulta
-            URL ur = new URL("https://mhw-db.com/armor");
-            HttpURLConnection conn = (HttpURLConnection) ur.openConnection();
-            conn.setRequestMethod("GET");
-            conn.connect();
 
-            int responseCode = conn.getResponseCode();
-
-            if (responseCode != 200) {
-                throw new RuntimeException("HttpResponseCode: " + responseCode);
-
-            } else {
-                //creamos un scanner para leer los datos de la api y con un writer escribimos dichos datos en un archivo json//
-                Scanner sc = new Scanner(ur.openStream());
-                try (var file = Files.newBufferedWriter(Path.of(Camino))) {
-                    while (sc.hasNext()) {
-                        file.append(sc.nextLine());
-                    }
-                } catch (IOException e) {
-                }
-                //cerramos scanner y cremos un JSONParser , esto es lo que transforma la infomacion en objetos json y jsonArraylists//
-                sc.close();
+                DAO TheDAO = new DAO("monsterhunterworld");
+                Connection connection = TheDAO.abrirConexionMySqlDB();
 
                 JSONParser parseJ = new JSONParser();
                 JSONArray dataObject = new JSONArray();
@@ -127,9 +119,12 @@ public class HelloController implements Initializable {
                     dataObject = (JSONArray) parseJ.parse(read);
                 } catch (IOException e) {
                     throw new RuntimeException();
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
                 }
 
-                /**
+
+            /**
                  * recorro el json ,cada objeto lo guardo en un JSONObject consigue el typo con el get y lo comparo para saber a que parte del cuerpo pertenece,
                  *   guardo estas piezas de armadura en un array especifico dependiendo del tipo despues de esto utilizo
                  *   un hasmap para vincular el nombre de la pieza con la posicion en el array es decir el index
@@ -139,9 +134,36 @@ public class HelloController implements Initializable {
                     JSONObject armors = (JSONObject) dataObject.get(i);
                     if (armors.get("type").equals("head")) {
 
-                        Helm.getItems().add(armors.get("name"));
-                        Helmets.add(dataObject.get(i));
-                        hHelmet.put((String) armors.get("name"),counth);
+                        valuesArmor[0] = armors.get("id").toString();
+                        valuesArmor[1] = armors.get("name").toString();
+                        String array = armors.get("resistances").toString();
+                        String skill = armors.get("skills").toString();
+
+                        split = array.split(":");
+                        for (int j = 0; j < split.length; j++) {
+                            System.out.println(split[j]);
+                        }
+                        fireRes = split[1].split(",");
+                        waterRes = split[2].split(",");
+                        iceRes = split[3].split(",");
+                        thunderRes = split[4].split(",");
+                        dragonRes = split[5].split(",");
+
+                        String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                        valuesArmor[2] = fireRes[0];
+                        valuesArmor[3] = waterRes[0];
+                        valuesArmor[4] = iceRes[0];
+                        valuesArmor[5] = thunderRes[0];
+                        valuesArmor[6] = dRes;
+
+
+                        TheDAO.insercionDatos("headgear",ArmorColumns,valuesArmor);
+
+                        System.out.println(skill);
+                        valuesSkill[0] = armors.get("id").toString();
+
+
                         counth+=1;
                     } else if (armors.get("type").equals("chest")) {
 
@@ -175,13 +197,9 @@ public class HelloController implements Initializable {
                 dataObject.clear();
 
 
-            }
 
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
