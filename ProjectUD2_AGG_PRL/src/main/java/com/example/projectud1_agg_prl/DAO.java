@@ -50,5 +50,27 @@ public class DAO {
 		return num;
 	}
 	
-	//TODO Implementar método para ler os datos almacenados na base de datos
+	public String lecturaDatos(String table, String[] columns) throws ClassNotFoundException, SQLException {
+		String result = "";
+		Connection con = this.abrirConexionMySqlDB();
+		Statement stmt = con.createStatement();
+		String query = "SELECT ";
+		for(int i = 0; i < columns.length - 1; i++) {
+			query += columns[i] + ", ";
+		}
+		query += columns[columns.length - 1] + " FROM " + table;
+		System.out.println(query);
+		ResultSet rs = stmt.executeQuery(query);
+		for(int i = 1; i < columns.length; i++) {
+			if(rs.next()) {
+				result += rs.getString(i) + ", ";
+			}
+		}
+		if(rs.next()) {
+			result += rs.getString(columns.length);
+		}
+		con.close();
+		return result;
+	}
+	
 }
