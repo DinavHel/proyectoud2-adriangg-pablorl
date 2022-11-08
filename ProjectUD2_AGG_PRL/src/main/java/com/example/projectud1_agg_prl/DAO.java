@@ -61,14 +61,13 @@ public class DAO {
 		query += columns[columns.length - 1] + " FROM " + table;
 		System.out.println(query);
 		ResultSet rs = stmt.executeQuery(query);
-		for(int i = 1; i < columns.length; i++) {
-			if(rs.next()) {
-				result += rs.getString(i) + ", ";
+		while(rs.next()) {
+			for(int i = 0; i < columns.length - 1; i++) {
+				result += rs.getString(columns[i]) + ", ";
 			}
+			result += rs.getString(columns[columns.length - 1]) + "\n";
 		}
-		if(rs.next()) {
-			result += rs.getString(columns.length);
-		}
+		
 		con.close();
 		return result;
 	}
