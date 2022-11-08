@@ -1,12 +1,14 @@
 package com.example.projectud1_agg_prl;
 
 import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DAO {
 	
 	String user;
 	String pass;
-	String jdbcUrl = "jdbc:mariadb://localhost:3306/teis1";
 	String dbName;
 	
 	public DAO(String dbName) {
@@ -21,16 +23,16 @@ public class DAO {
 		this.dbName = dbName;
 	}
 	
-	public Connection abrirConexionMariaDB() throws ClassNotFoundException, SQLException {
-		Class.forName("org.mariadb.jdbc.Driver");
-        String jdbcUrl = "jdbc:mariadb://localhost:3306/" + dbName;
+	public Connection abrirConexionMySqlDB() throws ClassNotFoundException, SQLException {
+		//Class.forName("org.mysql.jdbc.Driver");
+        String jdbcUrl = "jdbc:mysql://localhost:3306/" + dbName;
         
         Connection con = DriverManager.getConnection(jdbcUrl, user, pass);
 		return con;
 	}
 	
 	public int insercionDatos(String table, String[] columns, String[] values) throws ClassNotFoundException, SQLException {
-		Connection con = this.abrirConexionMariaDB();
+		Connection con = this.abrirConexionMySqlDB();
 		Statement stmt = con.createStatement();
 		String sql="INSERT INTO " + table + " (";
 		for(int i = 0; i < columns.length - 1; i++) {
