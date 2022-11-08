@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="380.0" prefWidth="640.0" styleClass="root" stylesheets="@../../../../../CssStyle/LoginStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectud1_agg_prl.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="380.0" prefWidth="640.0" styleClass="root" stylesheets="@../../../CssStyle/LoginStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.projectud1_agg_prl.HelloController">
    <children>
       <TextArea fx:id="Texto" layoutX="320.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" />
       <Label layoutX="28.0" layoutY="64.0" text="Helm" textFill="#fffefc" />
