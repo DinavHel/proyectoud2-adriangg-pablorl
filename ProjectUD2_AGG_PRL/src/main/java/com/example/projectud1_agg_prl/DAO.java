@@ -16,13 +16,31 @@ public class DAO {
 		this.pass = "root";
 		this.dbName = dbName;
 	}
-	
+
+	/**
+	 *
+	 * @param user
+	 * @param pass
+	 * @param dbName
+	 */
 	public DAO(String user, String pass, String dbName) {
 		this.user = user;
 		this.pass = pass;
 		this.dbName = dbName;
 	}
-	
+
+	/**
+	 *
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	/**
+	 * establece una conexion con una base de datos mysql
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public Connection abrirConexionMySqlDB() throws ClassNotFoundException, SQLException {
 		//Class.forName("org.mysql.jdbc.Driver");
         String jdbcUrl = "jdbc:mysql://localhost:3306/" + dbName;
@@ -30,7 +48,17 @@ public class DAO {
         Connection con = DriverManager.getConnection(jdbcUrl, user, pass);
 		return con;
 	}
-	
+
+	/**
+	 * inserta datos en la base de datos, utiliza el String table para selecionar al tabla donde insertar datos
+	 * columns para las columnas del insert y values para los valores que quieres insertar
+	 * @param table
+	 * @param columns
+	 * @param values
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public int insercionDatos(String table, String[] columns, String[] values) throws ClassNotFoundException, SQLException {
 		Connection con = this.abrirConexionMySqlDB();
 		Statement stmt = con.createStatement();
@@ -49,7 +77,17 @@ public class DAO {
         con.close();
 		return num;
 	}
-	
+
+	/**
+	 * metodo para una lectura basicade una tabla de la base de datos
+	 * String table para seleccionar la tabla que leer
+	 * Array columns para seleccionar las columnas a leer
+	 * @param table
+	 * @param columns
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public String lecturaDatos(String table, String[] columns) throws ClassNotFoundException, SQLException {
 		String result = "";
 		Connection con = this.abrirConexionMySqlDB();

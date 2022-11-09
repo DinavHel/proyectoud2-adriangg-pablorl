@@ -56,11 +56,7 @@ public class HelloController implements Initializable {
     @FXML
     private ComboBox Helm;
 
-    private JSONArray Helmets = new JSONArray();
-    private JSONArray Chestplate = new JSONArray();
-    private JSONArray Gauntlets = new JSONArray();
-    private JSONArray Waists= new JSONArray();
-    private JSONArray Leggins = new JSONArray();
+
 
 
     private static ArrayList<String> shownSkills = new ArrayList<>();
@@ -104,11 +100,12 @@ public class HelloController implements Initializable {
 
 
 
-        //busca si existe un archivo json para las armaduras//
+
 
 
         try {
-            //creas una conexion y con el metodo setRequestMethod delimitas el tipo de consulta
+           // con el metodo DAO creamos una conexion y utilizando el select observo si la  tabla headgear tiene filas o no
+            // si no tiene introduzco los datos del json en la base de datos si tiene salto esta parte
 
                 DAO TheDAO = new DAO("monsterhunterworld");
                 Connection connection = TheDAO.abrirConexionMySqlDB();
@@ -139,9 +136,9 @@ public class HelloController implements Initializable {
 
 
                     /**
-                     * recorro el json ,cada objeto lo guardo en un JSONObject consigue el typo con el get y lo comparo para saber a que parte del cuerpo pertenece,
-                     *   guardo estas piezas de armadura en un array especifico dependiendo del tipo despues de esto utilizo
-                     *   un hasmap para vincular el nombre de la pieza con la posicion en el array es decir el index
+                     * Tengo un array de jsonObject con todos los objetos Json,
+                     * de estos consigo el id , nombre de la armadura pero solo puedo conseguir un String de un array json con las skills y resistencias
+                     * algo que no nos dio tiempo a implementar, para conseguir los valores de estos String utilizo arrays y el metodo split
                      */
 
                     for (int i = 0; i < dataObject.size(); i++) {
@@ -357,6 +354,9 @@ public class HelloController implements Initializable {
                     dataObject.clear();
 
                 }
+            /**
+             * me conecto a la base de datos y introduzco todos los objetos del combo box desde esta.
+             */
             Connection con = TheDAO.abrirConexionMySqlDB();
             Statement statement = con.createStatement();
             ResultSet rsHelm = statement.executeQuery("SELECT name FROM headgear order by name");
@@ -410,11 +410,9 @@ public class HelloController implements Initializable {
     }
 
     /**
-     * cuando selecionas unha opcion en el comboBox se ejecuta uno de estos metodos dependiendo del combobox,
-     * obtienen mediante el value del item del comboBox el numero del indice de un array de JSON que utiliza para consigir los datos de las skills de la armadura
-     * luego a mano transformamos los datos en un objeto de java que hemos creado y
-     * despues estos objetos java se guardan en un array stático que  se recorre y se  escriben sus parámetros en la textArea
-     * @param event
+     *Cuando seleccionas uan opcion se conecta a la base de datos y busca con el nombre de la armadura su id,
+     * con esa id se conecta con una foreign key a otra tabla donde estan las skills
+     * y obtiene los valores que son mostrados por el textView, si se repiten skills estas se suman.
      */
    @FXML
    private void comboActionHelm(ActionEvent event) {
@@ -481,7 +479,7 @@ public class HelloController implements Initializable {
    }
 
     /**
-     * evento que se ejecuta al selecionar un item en la comboBox de Chest, idéntico al resto solo cambian los arrays
+     * evento que se ejecuta al selecionar un item en la comboBox de Chest, idéntico al resto solo cambian nombres de variables
      * @param event
      */
     @FXML
@@ -540,7 +538,7 @@ public class HelloController implements Initializable {
     }
 
     /**
-     * evento que se ejecuta al selecionar un item de la comboBox de Hands, idéntico al resto solo cambian los arrays
+     * evento que se ejecuta al selecionar un item de la comboBox de Hands, idéntico al resto solo cambian nombres de variables
      * @param event
      */
     @FXML
@@ -604,7 +602,7 @@ public class HelloController implements Initializable {
     }
 
     /**
-     * evento que se ejecuta al selecionar un item de la comboBox de Waist, idéntico al resto solo cambian los arrays
+     * evento que se ejecuta al selecionar un item de la comboBox de Waist, idéntico al resto solo cambian los nombre de variables
      * @param event
      */
     @FXML
@@ -712,6 +710,11 @@ public class HelloController implements Initializable {
 
 
     }
+
+    /**
+     * metodo para reiniciar las combo box y las skills del textView
+     * @param event
+     */
     @FXML
     private void ActionClear(ActionEvent event) {
         Legs.setDisable(false);
@@ -721,6 +724,7 @@ public class HelloController implements Initializable {
         Hands.setDisable(false);
         Texto.clear();
         shownSkills.clear();
+        levelSkills.clear();
     }
 
 
