@@ -18,6 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.xml.transform.Result;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -27,6 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -56,13 +61,10 @@ public class HelloController implements Initializable {
     private JSONArray Gauntlets = new JSONArray();
     private JSONArray Waists= new JSONArray();
     private JSONArray Leggins = new JSONArray();
-    private HashMap<String,Integer> hHelmet = new HashMap<>();
-    private HashMap<String,Integer> hChest = new HashMap<>();
-    private HashMap<String,Integer> hGloves = new HashMap<>();
-    private HashMap<String,Integer> hWaist = new HashMap<>();
-    private HashMap<String,Integer> hLegs = new HashMap<>();
 
-    private static ArrayList<Skill> shownSkills = new ArrayList<>();
+
+    private static ArrayList<String> shownSkills = new ArrayList<>();
+    private static ArrayList<Integer> levelSkills = new ArrayList<>();
 
     private String[] ArmorColumns = {"id","name","fire_res","water_res","ice_res","thunder_res","dragon_res"};
     private String[] chestSkills = {"Chest","skill","skill_level"};
@@ -78,7 +80,9 @@ public class HelloController implements Initializable {
     private String[] iceRes = new String[2];
     private String[] thunderRes = new String[2];
     private String[] dragonRes = new String[2];
-
+    private String[] splitSkills = new String[3];
+    private String[] skillLevel = new String[2];
+    private String[] skillName = new String[2];
 
     @FXML
     protected void onHelloButtonClick() {
@@ -111,7 +115,7 @@ public class HelloController implements Initializable {
             //creas una conexion y con el metodo setRequestMethod delimitas el tipo de consulta
 
                 DAO TheDAO = new DAO("monsterhunterworld");
-                Connection connection = TheDAO.abrirConexionMySqlDB();
+
 
                 JSONParser parseJ = new JSONParser();
                 JSONArray dataObject = new JSONArray();
@@ -139,10 +143,13 @@ public class HelloController implements Initializable {
                         String array = armors.get("resistances").toString();
                         String skill = armors.get("skills").toString();
 
+
+                        splitSkills = skill.split(":",3);
+                        skillLevel = splitSkills[2].split(",",2);
+                        skillName = splitSkills[1].split(",");
+
                         split = array.split(":");
-                        for (int j = 0; j < split.length; j++) {
-                            System.out.println(split[j]);
-                        }
+
                         fireRes = split[1].split(",");
                         waterRes = split[2].split(",");
                         iceRes = split[3].split(",");
@@ -160,41 +167,243 @@ public class HelloController implements Initializable {
 
                         TheDAO.insercionDatos("headgear",ArmorColumns,valuesArmor);
 
-                        System.out.println(skill);
-                        valuesSkill[0] = armors.get("id").toString();
 
+                        valuesSkill[0] = armors.get("id").toString();
+                        valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                        valuesSkill[2] = skillLevel[0];
+
+                        TheDAO.insercionDatos("headgear_skills",headSkills,valuesSkill);
 
                         counth+=1;
                     } else if (armors.get("type").equals("chest")) {
 
-                        Chest.getItems().add(armors.get("name"));
-                        Chestplate.add(dataObject.get(i));
-                        hChest.put((String) armors.get("name"),countc);
-                        countc+=1;
+                        valuesArmor[0] = armors.get("id").toString();
+                        valuesArmor[1] = armors.get("name").toString();
+                        String array = armors.get("resistances").toString();
+                        String skill = armors.get("skills").toString();
+
+
+
+
+                        split = array.split(":");
+
+                        fireRes = split[1].split(",");
+                        waterRes = split[2].split(",");
+                        iceRes = split[3].split(",");
+                        thunderRes = split[4].split(",");
+                        dragonRes = split[5].split(",");
+
+                        String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                        valuesArmor[2] = fireRes[0];
+                        valuesArmor[3] = waterRes[0];
+                        valuesArmor[4] = iceRes[0];
+                        valuesArmor[5] = thunderRes[0];
+                        valuesArmor[6] = dRes;
+
+
+                        TheDAO.insercionDatos("chest",ArmorColumns,valuesArmor);
+
+                        if (skill.length() <= 2) {
+
+                        } else {
+                            splitSkills = skill.split(":",3);
+                            skillLevel = splitSkills[2].split(",",2);
+                            skillName = splitSkills[1].split(",");
+                            valuesSkill[0] = armors.get("id").toString();
+                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                            valuesSkill[2] = skillLevel[0];
+                            TheDAO.insercionDatos("chest_skills",chestSkills,valuesSkill);
+                        }
+
+
+
+
+
                     } else if (armors.get("type").equals("gloves")) {
 
-                        Hands.getItems().add(armors.get("name"));
-                        Gauntlets.add(dataObject.get(i));
-                        hGloves.put((String) armors.get("name"),countg);
-                        countg++;
+
+                        valuesArmor[0] = armors.get("id").toString();
+                        valuesArmor[1] = armors.get("name").toString();
+                        String array = armors.get("resistances").toString();
+                        String skill = armors.get("skills").toString();
+
+
+
+
+                        split = array.split(":");
+
+                        fireRes = split[1].split(",");
+                        waterRes = split[2].split(",");
+                        iceRes = split[3].split(",");
+                        thunderRes = split[4].split(",");
+                        dragonRes = split[5].split(",");
+
+                        String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                        valuesArmor[2] = fireRes[0];
+                        valuesArmor[3] = waterRes[0];
+                        valuesArmor[4] = iceRes[0];
+                        valuesArmor[5] = thunderRes[0];
+                        valuesArmor[6] = dRes;
+
+
+                        TheDAO.insercionDatos("gloves",ArmorColumns,valuesArmor);
+
+                        if (skill.length() <= 2) {
+
+                        } else {
+                            splitSkills = skill.split(":",3);
+                            skillLevel = splitSkills[2].split(",",2);
+                            skillName = splitSkills[1].split(",");
+                            valuesSkill[0] = armors.get("id").toString();
+                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                            valuesSkill[2] = skillLevel[0];
+                            TheDAO.insercionDatos("gloves_skills",glovesSkills,valuesSkill);
+                        }
+
+
+
+
                     } else if (armors.get("type").equals("waist")) {
 
-                        Waist.getItems().add(armors.get("name"));
-                        Waists.add(dataObject.get(i));
-                        hWaist.put((String) armors.get("name"),countw);
-                        countw++;
+
+                        valuesArmor[0] = armors.get("id").toString();
+                        valuesArmor[1] = armors.get("name").toString();
+                        String array = armors.get("resistances").toString();
+                        String skill = armors.get("skills").toString();
+
+
+
+                        split = array.split(":");
+
+                        fireRes = split[1].split(",");
+                        waterRes = split[2].split(",");
+                        iceRes = split[3].split(",");
+                        thunderRes = split[4].split(",");
+                        dragonRes = split[5].split(",");
+
+                        String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                        valuesArmor[2] = fireRes[0];
+                        valuesArmor[3] = waterRes[0];
+                        valuesArmor[4] = iceRes[0];
+                        valuesArmor[5] = thunderRes[0];
+                        valuesArmor[6] = dRes;
+
+
+                        TheDAO.insercionDatos("waist",ArmorColumns,valuesArmor);
+
+
+                        if (skill.length() <= 2) {
+
+                        } else {
+                            splitSkills = skill.split(":",3);
+                            skillLevel = splitSkills[2].split(",",2);
+                            skillName = splitSkills[1].split(",");
+                            valuesSkill[0] = armors.get("id").toString();
+                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                            valuesSkill[2] = skillLevel[0];
+                            TheDAO.insercionDatos("waist_skills",waistSkills,valuesSkill);
+                        }
+
+
+
+
                     } else if (armors.get("type").equals("legs")) {
 
-                        Legs.getItems().add(armors.get("name"));
-                        Leggins.add(dataObject.get(i));
-                        hLegs.put((String) armors.get("name"),countl);
-                        countl++;
+
+                        valuesArmor[0] = armors.get("id").toString();
+                        valuesArmor[1] = armors.get("name").toString();
+                        String array = armors.get("resistances").toString();
+                        String skill = armors.get("skills").toString();
+
+
+
+
+                        split = array.split(":");
+
+                        fireRes = split[1].split(",");
+                        waterRes = split[2].split(",");
+                        iceRes = split[3].split(",");
+                        thunderRes = split[4].split(",");
+                        dragonRes = split[5].split(",");
+
+                        String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                        valuesArmor[2] = fireRes[0];
+                        valuesArmor[3] = waterRes[0];
+                        valuesArmor[4] = iceRes[0];
+                        valuesArmor[5] = thunderRes[0];
+                        valuesArmor[6] = dRes;
+
+
+                        TheDAO.insercionDatos("legs",ArmorColumns,valuesArmor);
+
+                        if (skill.length() <= 2) {
+
+                        } else {
+                            splitSkills = skill.split(":",3);
+                            skillLevel = splitSkills[2].split(",",2);
+                            skillName = splitSkills[1].split(",");
+                            valuesSkill[0] = armors.get("id").toString();
+                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                            valuesSkill[2] = skillLevel[0];
+                            TheDAO.insercionDatos("legs_skills",legsSkills,valuesSkill);
+                        }
+
+
+
+
                     }
 
 
                 }
 
                 dataObject.clear();
+
+
+            Connection con = TheDAO.abrirConexionMySqlDB();
+            Statement statement = con.createStatement();
+            ResultSet rsHelm = statement.executeQuery("SELECT name FROM headgear order by name");
+            while (rsHelm.next()) {
+                Helm.getItems().add(rsHelm.getString("name"));
+            }
+            con.close();
+
+            Connection con2 = TheDAO.abrirConexionMySqlDB();
+            Statement statement2 = con2.createStatement();
+            ResultSet rschest = statement2.executeQuery("SELECT name FROM chest order by name");
+            while (rschest.next()) {
+                Chest.getItems().add(rschest.getString("name"));
+            }
+            con2.close();
+
+            Connection con3 = TheDAO.abrirConexionMySqlDB();
+            Statement statement3 = con3.createStatement();
+            ResultSet rsgloves = statement3.executeQuery("SELECT name FROM gloves order by name");
+            while (rsgloves.next()) {
+                Hands.getItems().add(rsgloves.getString("name"));
+            }
+            con3.close();
+
+            Connection con4 = TheDAO.abrirConexionMySqlDB();
+            Statement statement4 = con4.createStatement();
+            ResultSet rswaist = statement4.executeQuery("SELECT name FROM waist order by name");
+            while (rswaist.next()) {
+                Waist.getItems().add(rswaist.getString("name"));
+            }
+            con4.close();
+
+            Connection con5 = TheDAO.abrirConexionMySqlDB();
+            Statement statement5 = con5.createStatement();
+            ResultSet rslegs = statement5.executeQuery("SELECT name FROM legs order by name");
+            while (rslegs.next()) {
+                Legs.getItems().add(rslegs.getString("name"));
+            }
+            con5.close();
+
+
 
 
 
@@ -215,36 +424,62 @@ public class HelloController implements Initializable {
      */
    @FXML
    private void comboActionHelm(ActionEvent event) {
+       Helm.setDisable(true);
+       String valor;
+       String skill,level;
        boolean repe = false;
-       String info = "";
+       String info ="";
+       DAO TheDAO = new DAO("monsterhunterworld");
+       try {
+           Connection con = TheDAO.abrirConexionMySqlDB();
 
-        Helm.setDisable(true);
-       int index = hHelmet.get(Helm.getValue());
-       JSONObject  selectedArmor = (JSONObject) Helmets.get(index);
-       JSONArray sk = (JSONArray) selectedArmor.get("skills");
+           valor = Helm.getValue().toString();
 
-       if (!sk.isEmpty()) {
-           for (int i = 0; i<sk.size();i++) {
-               JSONObject AC = (JSONObject) sk.get(i);
-               for (int l = 0;l<shownSkills.size();l++) {
-                   if (AC.get("skillName").equals(shownSkills.get(l).getName())) {
-                       int newlevel = (int) AC.get("level") + shownSkills.get(l).getLevel();
-                       shownSkills.get(l).setLevel(newlevel);
-                       repe = true;
+           String Query = " SELECT skill,skill_level FROM headgear_skills where headgear = (select id from headgear where name =  \"" +valor+  "\")";
+
+           Statement st = con.createStatement();
+           ResultSet rs = st.executeQuery(Query);
+
+
+
+
+
+           if(rs.next()) {
+               skill = rs.getString("skill");
+               level = rs.getString("skill_level");
+               for (int i = 0; i<shownSkills.size();i++) {
+                   if (skill.equals(shownSkills.get(i))) {
+                       int newLevel = levelSkills.get(i) + Integer.parseInt(level);
+                       levelSkills.set(i,newLevel);
+                       repe=true;
                    }
+
                }
                if (!repe) {
-                   Skill x = new Skill(AC.get("skillName").toString(),Integer.parseInt(AC.get("level").toString()),Integer.parseInt(AC.get("id").toString()));
-                   shownSkills.add(x);
+                   shownSkills.add(skill);
+                   levelSkills.add(Integer.parseInt(level));
                }
-               repe=false;
-           }
-       }
 
-       for (int l = 0;l<shownSkills.size();l++) {
-           info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
+
+               for (int i = 0; i<shownSkills.size();i++) {
+                   info +=shownSkills.get(i) + " : +" + levelSkills.get(i) + "\n";
+               }
+
+               Texto.setText(info);
+           }
+
+
+
+
+            con.close();
+
+
+           con.close();
+       } catch (ClassNotFoundException e) {
+           throw new RuntimeException(e);
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
        }
-       Texto.setText(info );
 
 
 
@@ -257,38 +492,54 @@ public class HelloController implements Initializable {
      */
     @FXML
     private void comboActionChest(ActionEvent event) {
-        boolean repe = false;
-        String info = "";
+
 
         Chest.setDisable(true);
-        int index = hChest.get(Chest.getValue().toString());
-        JSONObject selectedArmor = (JSONObject) Chestplate.get(index);
-        JSONArray sk = (JSONArray) selectedArmor.get("skills");
+        String valor;
+        String skill,level;
+        boolean repe = false;
+        String info ="";
+        DAO TheDAO = new DAO("monsterhunterworld");
+        try {
+            Connection con = TheDAO.abrirConexionMySqlDB();
+            valor = Chest.getValue().toString();
 
-        if (!sk.isEmpty()) {
-            for (int i = 0; i<sk.size();i++) {
-                JSONObject AC = (JSONObject) sk.get(i);
-                for (int l = 0;l<shownSkills.size();l++) {
-                    if (AC.get("skillName").equals(shownSkills.get(l).getName())) {
-                        int newlevel = (int) AC.get("level") + shownSkills.get(l).getLevel();
-                        shownSkills.get(l).setLevel(newlevel);
-                        repe = true;
+            String Quary = " SELECT skill,skill_level FROM chest_skills where Chest = (select id from chest where name =  \"" +valor+  "\")";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(Quary);
+            if (rs.next()) {
+                skill = rs.getString("skill");
+                level = rs.getString("skill_level");
+                for (int i = 0; i<shownSkills.size();i++) {
+                    if (skill.equals(shownSkills.get(i))) {
+                        int newLevel = levelSkills.get(i) + Integer.parseInt(level);
+                        levelSkills.set(i,newLevel);
+                        repe=true;
                     }
+
                 }
                 if (!repe) {
-                    Skill x = new Skill(AC.get("skillName").toString(),Integer.parseInt(AC.get("level").toString()),Integer.parseInt(AC.get("id").toString()));
-                    shownSkills.add(x);
+                    shownSkills.add(skill);
+                    levelSkills.add(Integer.parseInt(level));
                 }
-                repe=false;
+
+
+                for (int i = 0; i<shownSkills.size();i++) {
+                    info +=shownSkills.get(i) + " : +" + levelSkills.get(i) + "\n";
+                }
+
+                Texto.setText(info);
             }
+
+
+
+
+            con.close();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        for (int l = 0;l<shownSkills.size();l++) {
-            info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
-        }
-
-        Texto.setText(info );
-
 
 
 
@@ -300,39 +551,62 @@ public class HelloController implements Initializable {
      */
     @FXML
     private void comboActionGloves(ActionEvent event) {
-        boolean repe = false;
-        String info = "";
         Hands.setDisable(true);
-        int index = hGloves.get(Hands.getValue());
-        JSONObject  selectedArmor = (JSONObject) Gauntlets.get(index);
-        JSONArray sk = (JSONArray) selectedArmor.get("skills");
+        String valor;
+        String skill,level;
+        boolean repe = false;
+        String info ="";
+        DAO TheDAO = new DAO("monsterhunterworld");
+        try {
+            Connection con = TheDAO.abrirConexionMySqlDB();
+            Connection con2 = TheDAO.abrirConexionMySqlDB();
+            valor = Hands.getValue().toString();
 
-        if (!sk.isEmpty()) {
-            for (int i = 0; i<sk.size();i++) {
-                JSONObject AC = (JSONObject) sk.get(i);
-                for (int l = 0;l<shownSkills.size();l++) {
-                    if (AC.get("skillName").equals(shownSkills.get(l).getName())) {
-                        int newlevel = (int) AC.get("level") + shownSkills.get(l).getLevel();
-                        shownSkills.get(l).setLevel(newlevel);
-                        repe = true;
+            String Query = " SELECT skill,skill_level FROM gloves_skills where gloves = (select id from gloves where name =  \"" +valor+  "\")";
+            Statement stCheck = con2.createStatement();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(Query);
+
+
+
+
+
+                    if(rs.next()) {
+                        skill = rs.getString("skill");
+                        level = rs.getString("skill_level");
+                        for (int i = 0; i<shownSkills.size();i++) {
+                            if (skill.equals(shownSkills.get(i))) {
+                                int newLevel = levelSkills.get(i) + Integer.parseInt(level);
+                                levelSkills.set(i,newLevel);
+                                repe=true;
+                            }
+
+                        }
+                        if (!repe) {
+                            shownSkills.add(skill);
+                            levelSkills.add(Integer.parseInt(level));
+                        }
+
+
+                        for (int i = 0; i<shownSkills.size();i++) {
+                            info +=shownSkills.get(i) + " : +" + levelSkills.get(i) + "\n";
+                        }
+
+                        Texto.setText(info);
                     }
-                }
-                if (!repe) {
-                    Skill x = new Skill(AC.get("skillName").toString(),Integer.parseInt(AC.get("level").toString()),Integer.parseInt(AC.get("id").toString()));
-                    shownSkills.add(x);
-                }
-                repe=false;
-            }
+
+
+
+
+
+
+
+            con.close();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        for (int l = 0;l<shownSkills.size();l++) {
-            info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
-        }
-
-        Texto.setText(info );
-
-
-
     }
 
     /**
@@ -341,37 +615,51 @@ public class HelloController implements Initializable {
      */
     @FXML
      private void comboActionWaist(ActionEvent event) {
-        boolean repe = false;
-        String info = "";
-
         Waist.setDisable(true);
-        int index = hWaist.get(Waist.getValue());
-        JSONObject  selectedArmor = (JSONObject) Waists.get(index);
-        JSONArray sk = (JSONArray) selectedArmor.get("skills");
+        String valor;
+        String skill,level;
+        boolean repe = false;
+        String info ="";
+        DAO TheDAO = new DAO("monsterhunterworld");
+        try {
+            Connection con = TheDAO.abrirConexionMySqlDB();
+            valor = Waist.getValue().toString();
 
-            if (!sk.isEmpty()) {
-                for (int i = 0; i<sk.size();i++) {
-                    JSONObject AC = (JSONObject) sk.get(i);
-                    for (int l = 0;l<shownSkills.size();l++) {
-                        if (AC.get("skillName").equals(shownSkills.get(l).getName())) {
-                            int newlevel = (int) AC.get("level") + shownSkills.get(l).getLevel();
-                            shownSkills.get(l).setLevel(newlevel);
-                            repe = true;
-                        }
+            String Query = " SELECT skill,skill_level FROM waist_skills where waist = (select id from waist where name =  \"" +valor+  "\")";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(Query);
+
+            if (rs.next()) {
+                skill = rs.getString("skill");
+                level = rs.getString("skill_level");
+                for (int i = 0; i<shownSkills.size();i++) {
+                    if (skill.equals(shownSkills.get(i))) {
+                        int newLevel = levelSkills.get(i) + Integer.parseInt(level);
+                        levelSkills.set(i,newLevel);
+                        repe=true;
                     }
-                    if (!repe) {
-                        Skill x = new Skill(AC.get("skillName").toString(),Integer.parseInt(AC.get("level").toString()),Integer.parseInt(AC.get("id").toString()));
-                        shownSkills.add(x);
-                    }
-                    repe=false;
+
                 }
+                if (!repe) {
+                    shownSkills.add(skill);
+                    levelSkills.add(Integer.parseInt(level));
+                }
+
+
+                for (int i = 0; i<shownSkills.size();i++) {
+                    info +=shownSkills.get(i) + " : +" + levelSkills.get(i) + "\n";
+                }
+
+                Texto.setText(info);
             }
 
-            for (int l = 0;l<shownSkills.size();l++) {
-                info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
-            }
 
-            Texto.setText(info );
+            con.close();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
 
 
@@ -383,37 +671,50 @@ public class HelloController implements Initializable {
      */
     @FXML
     private void comboActionLegs(ActionEvent event) {
-        boolean repe = false;
-        String info = "";
         Legs.setDisable(true);
-        int index = hLegs.get(Legs.getValue());
-        JSONObject  selectedArmor = (JSONObject) Leggins.get(index);
-        JSONArray sk = (JSONArray) selectedArmor.get("skills");
+        String valor;
+        String skill,level;
+        boolean repe = false;
+        String info ="";
+        DAO TheDAO = new DAO("monsterhunterworld");
+        try {
+            Connection con = TheDAO.abrirConexionMySqlDB();
+            valor = Legs.getValue().toString();
 
-            if (!sk.isEmpty()) {
-                for (int i = 0; i<sk.size();i++) {
-                    JSONObject AC = (JSONObject) sk.get(i);
-                    for (int l = 0;l<shownSkills.size();l++) {
-                        if (AC.get("skillName").equals(shownSkills.get(l).getName())) {
-                            int newlevel = (int) AC.get("level") + shownSkills.get(l).getLevel();
-                            shownSkills.get(l).setLevel(newlevel);
-                            repe = true;
-                        }
+            String Query = " SELECT skill,skill_level FROM legs_skills where legs = (select id from legs where name = \"" +valor+  "\")";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(Query);
+            if(rs.next()) {
+                skill = rs.getString("skill");
+                level = rs.getString("skill_level");
+                for (int i = 0; i<shownSkills.size();i++) {
+                    if (skill.equals(shownSkills.get(i))) {
+                        int newLevel = levelSkills.get(i) + Integer.parseInt(level);
+                        levelSkills.set(i,newLevel);
+                        repe=true;
                     }
-                    if (!repe) {
-                        Skill x = new Skill(AC.get("skillName").toString(),Integer.parseInt(AC.get("level").toString()),Integer.parseInt(AC.get("id").toString()));
-                        shownSkills.add(x);
-                    }
-                    repe=false;
+
                 }
+                if (!repe) {
+                    shownSkills.add(skill);
+                    levelSkills.add(Integer.parseInt(level));
+                }
+
+
+                for (int i = 0; i<shownSkills.size();i++) {
+                    info +=shownSkills.get(i) + " : +" + levelSkills.get(i) + "\n";
+                }
+
+                Texto.setText(info);
             }
 
-            for (int l = 0;l<shownSkills.size();l++) {
-                info += shownSkills.get(l).getName() + " : + " + shownSkills.get(l).getLevel() + "\n";
-            }
 
-            Texto.setText(info);
-
+            con.close();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
