@@ -100,13 +100,9 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String Camino = "armaduras.json";
-        File Armaduras = new File(Camino);
-        //variables que se utilizan para la creacion de los hasmaps
-        int countw = 0;
-        int countg = 0;
-        int counth = 0;
-        int countc = 0;
-        int countl = 0;
+        boolean exists = false ;
+
+
 
         //busca si existe un archivo json para las armaduras//
 
@@ -115,254 +111,252 @@ public class HelloController implements Initializable {
             //creas una conexion y con el metodo setRequestMethod delimitas el tipo de consulta
 
                 DAO TheDAO = new DAO("monsterhunterworld");
+                Connection connection = TheDAO.abrirConexionMySqlDB();
+                Statement st = connection.createStatement();
+                try {
+                    ResultSet resultSet = st.executeQuery("SELECT count(*) as cnt FROM headgear");
+                    if (resultSet.next()) {
+                        if (resultSet.getInt("cnt") > 0) {
+                            exists = true;
+                        } else {
+
+                        }
+                    }
+                } catch (Exception e) {
 
 
-                JSONParser parseJ = new JSONParser();
-                JSONArray dataObject = new JSONArray();
-                try (var read = Files.newBufferedReader(Path.of(Camino))) {
-                    dataObject = (JSONArray) parseJ.parse(read);
-                } catch (IOException e) {
-                    throw new RuntimeException();
-                } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
                 }
+                if (!exists) {
+                    JSONParser parseJ = new JSONParser();
+                    JSONArray dataObject = new JSONArray();
+                    try (var read = Files.newBufferedReader(Path.of(Camino))) {
+                        dataObject = (JSONArray) parseJ.parse(read);
+                    } catch (IOException e) {
+                        throw new RuntimeException();
+                    } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
 
-            /**
-                 * recorro el json ,cada objeto lo guardo en un JSONObject consigue el typo con el get y lo comparo para saber a que parte del cuerpo pertenece,
-                 *   guardo estas piezas de armadura en un array especifico dependiendo del tipo despues de esto utilizo
-                 *   un hasmap para vincular el nombre de la pieza con la posicion en el array es decir el index
-                 */
+                    /**
+                     * recorro el json ,cada objeto lo guardo en un JSONObject consigue el typo con el get y lo comparo para saber a que parte del cuerpo pertenece,
+                     *   guardo estas piezas de armadura en un array especifico dependiendo del tipo despues de esto utilizo
+                     *   un hasmap para vincular el nombre de la pieza con la posicion en el array es decir el index
+                     */
 
-                for (int i = 0; i < dataObject.size(); i++) {
-                    JSONObject armors = (JSONObject) dataObject.get(i);
-                    if (armors.get("type").equals("head")) {
+                    for (int i = 0; i < dataObject.size(); i++) {
+                        JSONObject armors = (JSONObject) dataObject.get(i);
+                        if (armors.get("type").equals("head")) {
 
-                        valuesArmor[0] = armors.get("id").toString();
-                        valuesArmor[1] = armors.get("name").toString();
-                        String array = armors.get("resistances").toString();
-                        String skill = armors.get("skills").toString();
-
-
-                        splitSkills = skill.split(":",3);
-                        skillLevel = splitSkills[2].split(",",2);
-                        skillName = splitSkills[1].split(",");
-
-                        split = array.split(":");
-
-                        fireRes = split[1].split(",");
-                        waterRes = split[2].split(",");
-                        iceRes = split[3].split(",");
-                        thunderRes = split[4].split(",");
-                        dragonRes = split[5].split(",");
-
-                        String dRes = String.valueOf(dragonRes[0].charAt(0));
-
-                        valuesArmor[2] = fireRes[0];
-                        valuesArmor[3] = waterRes[0];
-                        valuesArmor[4] = iceRes[0];
-                        valuesArmor[5] = thunderRes[0];
-                        valuesArmor[6] = dRes;
+                            valuesArmor[0] = armors.get("id").toString();
+                            valuesArmor[1] = armors.get("name").toString();
+                            String array = armors.get("resistances").toString();
+                            String skill = armors.get("skills").toString();
 
 
-                        TheDAO.insercionDatos("headgear",ArmorColumns,valuesArmor);
-
-
-                        valuesSkill[0] = armors.get("id").toString();
-                        valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
-                        valuesSkill[2] = skillLevel[0];
-
-                        TheDAO.insercionDatos("headgear_skills",headSkills,valuesSkill);
-
-                        counth+=1;
-                    } else if (armors.get("type").equals("chest")) {
-
-                        valuesArmor[0] = armors.get("id").toString();
-                        valuesArmor[1] = armors.get("name").toString();
-                        String array = armors.get("resistances").toString();
-                        String skill = armors.get("skills").toString();
-
-
-
-
-                        split = array.split(":");
-
-                        fireRes = split[1].split(",");
-                        waterRes = split[2].split(",");
-                        iceRes = split[3].split(",");
-                        thunderRes = split[4].split(",");
-                        dragonRes = split[5].split(",");
-
-                        String dRes = String.valueOf(dragonRes[0].charAt(0));
-
-                        valuesArmor[2] = fireRes[0];
-                        valuesArmor[3] = waterRes[0];
-                        valuesArmor[4] = iceRes[0];
-                        valuesArmor[5] = thunderRes[0];
-                        valuesArmor[6] = dRes;
-
-
-                        TheDAO.insercionDatos("chest",ArmorColumns,valuesArmor);
-
-                        if (skill.length() <= 2) {
-
-                        } else {
-                            splitSkills = skill.split(":",3);
-                            skillLevel = splitSkills[2].split(",",2);
+                            splitSkills = skill.split(":", 3);
+                            skillLevel = splitSkills[2].split(",", 2);
                             skillName = splitSkills[1].split(",");
+
+                            split = array.split(":");
+
+                            fireRes = split[1].split(",");
+                            waterRes = split[2].split(",");
+                            iceRes = split[3].split(",");
+                            thunderRes = split[4].split(",");
+                            dragonRes = split[5].split(",");
+
+                            String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                            valuesArmor[2] = fireRes[0];
+                            valuesArmor[3] = waterRes[0];
+                            valuesArmor[4] = iceRes[0];
+                            valuesArmor[5] = thunderRes[0];
+                            valuesArmor[6] = dRes;
+
+
+                            TheDAO.insercionDatos("headgear", ArmorColumns, valuesArmor);
+
+
                             valuesSkill[0] = armors.get("id").toString();
-                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
+                            valuesSkill[1] = skillName[0].substring(1, (skillName[0].length()) - 1);
                             valuesSkill[2] = skillLevel[0];
-                            TheDAO.insercionDatos("chest_skills",chestSkills,valuesSkill);
+
+                            TheDAO.insercionDatos("headgear_skills", headSkills, valuesSkill);
+
+
+                        } else if (armors.get("type").equals("chest")) {
+
+                            valuesArmor[0] = armors.get("id").toString();
+                            valuesArmor[1] = armors.get("name").toString();
+                            String array = armors.get("resistances").toString();
+                            String skill = armors.get("skills").toString();
+
+
+                            split = array.split(":");
+
+                            fireRes = split[1].split(",");
+                            waterRes = split[2].split(",");
+                            iceRes = split[3].split(",");
+                            thunderRes = split[4].split(",");
+                            dragonRes = split[5].split(",");
+
+                            String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                            valuesArmor[2] = fireRes[0];
+                            valuesArmor[3] = waterRes[0];
+                            valuesArmor[4] = iceRes[0];
+                            valuesArmor[5] = thunderRes[0];
+                            valuesArmor[6] = dRes;
+
+
+                            TheDAO.insercionDatos("chest", ArmorColumns, valuesArmor);
+
+                            if (skill.length() <= 2) {
+
+                            } else {
+                                splitSkills = skill.split(":", 3);
+                                skillLevel = splitSkills[2].split(",", 2);
+                                skillName = splitSkills[1].split(",");
+                                valuesSkill[0] = armors.get("id").toString();
+                                valuesSkill[1] = skillName[0].substring(1, (skillName[0].length()) - 1);
+                                valuesSkill[2] = skillLevel[0];
+                                TheDAO.insercionDatos("chest_skills", chestSkills, valuesSkill);
+                            }
+
+
+                        } else if (armors.get("type").equals("gloves")) {
+
+
+                            valuesArmor[0] = armors.get("id").toString();
+                            valuesArmor[1] = armors.get("name").toString();
+                            String array = armors.get("resistances").toString();
+                            String skill = armors.get("skills").toString();
+
+
+                            split = array.split(":");
+
+                            fireRes = split[1].split(",");
+                            waterRes = split[2].split(",");
+                            iceRes = split[3].split(",");
+                            thunderRes = split[4].split(",");
+                            dragonRes = split[5].split(",");
+
+                            String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                            valuesArmor[2] = fireRes[0];
+                            valuesArmor[3] = waterRes[0];
+                            valuesArmor[4] = iceRes[0];
+                            valuesArmor[5] = thunderRes[0];
+                            valuesArmor[6] = dRes;
+
+
+                            TheDAO.insercionDatos("gloves", ArmorColumns, valuesArmor);
+
+                            if (skill.length() <= 2) {
+
+                            } else {
+                                splitSkills = skill.split(":", 3);
+                                skillLevel = splitSkills[2].split(",", 2);
+                                skillName = splitSkills[1].split(",");
+                                valuesSkill[0] = armors.get("id").toString();
+                                valuesSkill[1] = skillName[0].substring(1, (skillName[0].length()) - 1);
+                                valuesSkill[2] = skillLevel[0];
+                                TheDAO.insercionDatos("gloves_skills", glovesSkills, valuesSkill);
+                            }
+
+
+                        } else if (armors.get("type").equals("waist")) {
+
+
+                            valuesArmor[0] = armors.get("id").toString();
+                            valuesArmor[1] = armors.get("name").toString();
+                            String array = armors.get("resistances").toString();
+                            String skill = armors.get("skills").toString();
+
+
+                            split = array.split(":");
+
+                            fireRes = split[1].split(",");
+                            waterRes = split[2].split(",");
+                            iceRes = split[3].split(",");
+                            thunderRes = split[4].split(",");
+                            dragonRes = split[5].split(",");
+
+                            String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                            valuesArmor[2] = fireRes[0];
+                            valuesArmor[3] = waterRes[0];
+                            valuesArmor[4] = iceRes[0];
+                            valuesArmor[5] = thunderRes[0];
+                            valuesArmor[6] = dRes;
+
+
+                            TheDAO.insercionDatos("waist", ArmorColumns, valuesArmor);
+
+
+                            if (skill.length() <= 2) {
+
+                            } else {
+                                splitSkills = skill.split(":", 3);
+                                skillLevel = splitSkills[2].split(",", 2);
+                                skillName = splitSkills[1].split(",");
+                                valuesSkill[0] = armors.get("id").toString();
+                                valuesSkill[1] = skillName[0].substring(1, (skillName[0].length()) - 1);
+                                valuesSkill[2] = skillLevel[0];
+                                TheDAO.insercionDatos("waist_skills", waistSkills, valuesSkill);
+                            }
+
+
+                        } else if (armors.get("type").equals("legs")) {
+
+
+                            valuesArmor[0] = armors.get("id").toString();
+                            valuesArmor[1] = armors.get("name").toString();
+                            String array = armors.get("resistances").toString();
+                            String skill = armors.get("skills").toString();
+
+
+                            split = array.split(":");
+
+                            fireRes = split[1].split(",");
+                            waterRes = split[2].split(",");
+                            iceRes = split[3].split(",");
+                            thunderRes = split[4].split(",");
+                            dragonRes = split[5].split(",");
+
+                            String dRes = String.valueOf(dragonRes[0].charAt(0));
+
+                            valuesArmor[2] = fireRes[0];
+                            valuesArmor[3] = waterRes[0];
+                            valuesArmor[4] = iceRes[0];
+                            valuesArmor[5] = thunderRes[0];
+                            valuesArmor[6] = dRes;
+
+
+                            TheDAO.insercionDatos("legs", ArmorColumns, valuesArmor);
+
+                            if (skill.length() <= 2) {
+
+                            } else {
+                                splitSkills = skill.split(":", 3);
+                                skillLevel = splitSkills[2].split(",", 2);
+                                skillName = splitSkills[1].split(",");
+                                valuesSkill[0] = armors.get("id").toString();
+                                valuesSkill[1] = skillName[0].substring(1, (skillName[0].length()) - 1);
+                                valuesSkill[2] = skillLevel[0];
+                                TheDAO.insercionDatos("legs_skills", legsSkills, valuesSkill);
+                            }
+
+
                         }
-
-
-
-
-
-                    } else if (armors.get("type").equals("gloves")) {
-
-
-                        valuesArmor[0] = armors.get("id").toString();
-                        valuesArmor[1] = armors.get("name").toString();
-                        String array = armors.get("resistances").toString();
-                        String skill = armors.get("skills").toString();
-
-
-
-
-                        split = array.split(":");
-
-                        fireRes = split[1].split(",");
-                        waterRes = split[2].split(",");
-                        iceRes = split[3].split(",");
-                        thunderRes = split[4].split(",");
-                        dragonRes = split[5].split(",");
-
-                        String dRes = String.valueOf(dragonRes[0].charAt(0));
-
-                        valuesArmor[2] = fireRes[0];
-                        valuesArmor[3] = waterRes[0];
-                        valuesArmor[4] = iceRes[0];
-                        valuesArmor[5] = thunderRes[0];
-                        valuesArmor[6] = dRes;
-
-
-                        TheDAO.insercionDatos("gloves",ArmorColumns,valuesArmor);
-
-                        if (skill.length() <= 2) {
-
-                        } else {
-                            splitSkills = skill.split(":",3);
-                            skillLevel = splitSkills[2].split(",",2);
-                            skillName = splitSkills[1].split(",");
-                            valuesSkill[0] = armors.get("id").toString();
-                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
-                            valuesSkill[2] = skillLevel[0];
-                            TheDAO.insercionDatos("gloves_skills",glovesSkills,valuesSkill);
-                        }
-
-
-
-
-                    } else if (armors.get("type").equals("waist")) {
-
-
-                        valuesArmor[0] = armors.get("id").toString();
-                        valuesArmor[1] = armors.get("name").toString();
-                        String array = armors.get("resistances").toString();
-                        String skill = armors.get("skills").toString();
-
-
-
-                        split = array.split(":");
-
-                        fireRes = split[1].split(",");
-                        waterRes = split[2].split(",");
-                        iceRes = split[3].split(",");
-                        thunderRes = split[4].split(",");
-                        dragonRes = split[5].split(",");
-
-                        String dRes = String.valueOf(dragonRes[0].charAt(0));
-
-                        valuesArmor[2] = fireRes[0];
-                        valuesArmor[3] = waterRes[0];
-                        valuesArmor[4] = iceRes[0];
-                        valuesArmor[5] = thunderRes[0];
-                        valuesArmor[6] = dRes;
-
-
-                        TheDAO.insercionDatos("waist",ArmorColumns,valuesArmor);
-
-
-                        if (skill.length() <= 2) {
-
-                        } else {
-                            splitSkills = skill.split(":",3);
-                            skillLevel = splitSkills[2].split(",",2);
-                            skillName = splitSkills[1].split(",");
-                            valuesSkill[0] = armors.get("id").toString();
-                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
-                            valuesSkill[2] = skillLevel[0];
-                            TheDAO.insercionDatos("waist_skills",waistSkills,valuesSkill);
-                        }
-
-
-
-
-                    } else if (armors.get("type").equals("legs")) {
-
-
-                        valuesArmor[0] = armors.get("id").toString();
-                        valuesArmor[1] = armors.get("name").toString();
-                        String array = armors.get("resistances").toString();
-                        String skill = armors.get("skills").toString();
-
-
-
-
-                        split = array.split(":");
-
-                        fireRes = split[1].split(",");
-                        waterRes = split[2].split(",");
-                        iceRes = split[3].split(",");
-                        thunderRes = split[4].split(",");
-                        dragonRes = split[5].split(",");
-
-                        String dRes = String.valueOf(dragonRes[0].charAt(0));
-
-                        valuesArmor[2] = fireRes[0];
-                        valuesArmor[3] = waterRes[0];
-                        valuesArmor[4] = iceRes[0];
-                        valuesArmor[5] = thunderRes[0];
-                        valuesArmor[6] = dRes;
-
-
-                        TheDAO.insercionDatos("legs",ArmorColumns,valuesArmor);
-
-                        if (skill.length() <= 2) {
-
-                        } else {
-                            splitSkills = skill.split(":",3);
-                            skillLevel = splitSkills[2].split(",",2);
-                            skillName = splitSkills[1].split(",");
-                            valuesSkill[0] = armors.get("id").toString();
-                            valuesSkill[1] = skillName[0].substring(1,(skillName[0].length())-1);
-                            valuesSkill[2] = skillLevel[0];
-                            TheDAO.insercionDatos("legs_skills",legsSkills,valuesSkill);
-                        }
-
-
 
 
                     }
 
+                    dataObject.clear();
 
                 }
-
-                dataObject.clear();
-
-
             Connection con = TheDAO.abrirConexionMySqlDB();
             Statement statement = con.createStatement();
             ResultSet rsHelm = statement.executeQuery("SELECT name FROM headgear order by name");
